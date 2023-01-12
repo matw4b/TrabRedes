@@ -26,7 +26,7 @@ class R2ANewAlgorithm1(IR2A):
 
     def handle_xml_response(self, msg):
 
-        parsed_mpd = parse_mpd(msg.get_payload())
+        parsed_mpd = parse_mpd(msg.get_payload()) #testeblabla
         self.qi = parsed_mpd.get_qi()
 
         t = time.perf_counter() - self.request_time
