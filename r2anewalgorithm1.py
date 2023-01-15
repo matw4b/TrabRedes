@@ -73,7 +73,7 @@ class R2ANewAlgorithm1(IR2A):
         self.send_up(msg)
 
     def initialize(self):
-        pass
+        pass #teste
 
     def finalization(self):
         pass
