@@ -3,7 +3,6 @@ Autores:
     Matheus Guaraci 180046951
     Leonardo Maximo
     Gabriel Nascimento
-
 """
 
 from r2a.ir2a import IR2A
@@ -13,7 +12,7 @@ from statistics import mean
 from numpy import argmin
 
 
-class R2ANewAlgorithm1(IR2A):
+class R2ANewAlgoritm1(IR2A):
 
     def __init__(self, id):
         IR2A.__init__(self, id)
@@ -39,7 +38,7 @@ class R2ANewAlgorithm1(IR2A):
     def handle_segment_size_request(self, msg):
 
         self.request_time = time.perf_counter()
-        if not self.throughputs: #se o algoritmo acabou de comecar, entao a qualidade escolhida sera a pior
+        if self.throughputs == []: #se o algoritmo acabou de comecar, entao a qualidade escolhida sera a pior
             qualidade = self.qi[0]
             self.indice = 0
         else: #senao
@@ -53,14 +52,14 @@ class R2ANewAlgorithm1(IR2A):
             mad_weighted = (mad_weighted)/len(self.throughputs)
             probabilidade = (media)/(media + mad_weighted) #tendencia de mudar de qualidade
 
-            aumentar = probabilidade*(self.qi[min(len(self.qi), self.indice+1)]) #tendencia de aumentar a qualidade
+            aumentar = probabilidade*(self.qi[min(len(self.qi), self.indice)]) #tendencia de aumentar a qualidade
             diminuir = (1-probabilidade)*(self.qi[max(0, self.indice-1)]) #tendencia de diminuir a qualidade
 
-            qualidade = argmin(qualidade - diminuir + aumentar) #atualiza o valor da qualidade
+            qualidade = qualidade - diminuir + aumentar #atualiza o valor da qualidade
 
             for i, item in enumerate(self.qi):
-                if item == qualidade:
-                    break
+                if qualidade > item:
+                    qualidade = item
 
             self.indice = i #salva o indice atual, pois o atual vira o anterior da proxima chamada do handle
 
@@ -77,3 +76,5 @@ class R2ANewAlgorithm1(IR2A):
 
     def finalization(self):
         pass
+
+
