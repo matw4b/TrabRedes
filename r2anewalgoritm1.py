@@ -38,7 +38,7 @@ class R2ANewAlgoritm1(IR2A):
     def handle_segment_size_request(self, msg):
 
         self.request_time = time.perf_counter()
-        print("Índice: ", self.indice)
+        #print("Índice: ", self.indice)
         if self.throughputs == []: #se o algoritmo acabou de comecar, entao a qualidade escolhida sera a pior
             qualidade = self.qi[0]
             self.indice = 0
@@ -64,23 +64,25 @@ class R2ANewAlgoritm1(IR2A):
             probabilidade = (media)/(media + mad_weighted) #tendencia de mudar de qualidade
             aumentar = probabilidade*(self.qi[min(len(self.qi), self.indice)]) #tendencia de aumentar a qualidade
             diminuir = (1-probabilidade)*(self.qi[max(0, self.indice-1)]) #tendencia de diminuir a qualidade
-
+            print("Qualidade Real: " , qualidade)
             qualidadeAux = qualidade - diminuir + aumentar #atualiza o valor da qualidade
-            #print("Média: " , media)
-            #print("DesvPad: " , mad_weighted)
+            print("Média: " , media)
+            print("DesvPad: " , mad_weighted)
             #print("Probabilidade: " , probabilidade)
-            #print("aumentar: " , aumentar)
-            #print("Diminuir: " , diminuir)
-            #print("Qualidade: " , qualidadeAux)
+            print("aumentar: " , aumentar)
+            print("Diminuir: " , diminuir)
+            print("Qualidade: " , qualidadeAux)
             #print(self.throughputs)
+            print(self.qi)
             aux = 0
             for item in self.qi:
                 #print("Qualidade atual",item)
-                print("Indice", aux)
-                if qualidadeAux > item or aux == (len(self.qi)-2):
-                    print("Qualidade posível",item)
+                #print("Indice", aux)
+                if qualidadeAux > item:
+                    #print("Qualidade posível",item)
                     qualidade = item
-                    aux+=1
+                    if aux < (len(self.qi)-1):
+                        aux+=1
 
             self.indice = aux #salva o indice atual, pois o atual vira o anterior da proxima chamada do handle
         
