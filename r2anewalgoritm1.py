@@ -39,6 +39,7 @@ class R2ANewAlgoritm1(IR2A):
     def handle_segment_size_request(self, msg):
 
         self.request_time = time.perf_counter()
+        n = self.n
         #print("Índice: ", self.indice)
         if self.throughputs == []: #se o algoritmo acabou de comecar, entao a qualidade escolhida sera a pior
             qualidade = self.qi[0]
