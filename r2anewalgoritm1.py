@@ -44,48 +44,34 @@ class R2ANewAlgoritm1(IR2A):
             self.indice = 0
         else: #senao
             qualidade = self.qi[self.indice] #coloca a qualidade anterior na variavel
-            media = 0
-            if(len(self.throughputs) < 10):
-                media = mean(self.throughputs)
-            else:
-                for i in range(10):
-                    media += self.throughputs[len(self.throughputs)-1-i]/10  # media das taxas
+            media = mean(self.throughputs)
             mad_weighted = 0 #media do desvio absoluto com pesos (pesquise apenas mad no google).mad mostra se a estabilidade da rede
-            if(len(self.throughputs) >= 10):
-                for i in range(10):
-                    mad_weighted += ((10 - i)/(10))*(abs(self.throughputs[len(self.throughputs)-1-i] - media)) #o vetor ja esta ordenado do dado mais antigo para o dado mais recente
-                #colocamos um peso nos itens da taxa para que os mais recentes tenham peso maior
-            #mad_weighted = (mad_weighted)/len(self.throughputs)
-            else:
-                ind = 0
-                for item in self.throughputs:
-                    mad_weighted += ((ind + 1)/(len(self.throughputs)))*(abs(item - media)) #o vetor ja esta ordenado do dado mais antigo para o dado mais recente
-                    ind+=1
+            for indice, item in enumerate(self.throughputs):
+                soma = item - media #calcula o valor do item menos a media
+                soma = abs(soma) #tira qualquer sinal dessa soma para que fique sempre positivo
+                mad_weighted += ((indice + 1)/len(self.throughputs)) * soma  #calcula a mad
+                # colocamos um peso nos itens da taxa para que os mais recentes tenham peso maior
+
             probabilidade = (media)/(media + mad_weighted) #tendencia de mudar de qualidade
-            aumentar = probabilidade*(self.qi[min(len(self.qi), self.indice)]) #tendencia de aumentar a qualidade
+            aumentar = probabilidade*(self.qi[min(len(self.qi)-1, self.indice+1)]) #tendencia de aumentar a qualidade
             diminuir = (1-probabilidade)*(self.qi[max(0, self.indice-1)]) #tendencia de diminuir a qualidade
             print("Qualidade Real: " , qualidade)
-            qualidadeAux = qualidade - diminuir + aumentar #atualiza o valor da qualidade
+            qualidadeAux = qualidade - diminuir + aumentar #calcula o valor da proxima qualidade
             print("Média: " , media)
             print("DesvPad: " , mad_weighted)
-            #print("Probabilidade: " , probabilidade)
+            print("Probabilidade: " , probabilidade)
             print("aumentar: " , aumentar)
             print("Diminuir: " , diminuir)
-            print("Qualidade: " , qualidadeAux)
+            print("QualidadeAux: " , qualidadeAux)
             #print(self.throughputs)
             print(self.qi)
-            aux = 0
-            for item in self.qi:
-                #print("Qualidade atual",item)
-                #print("Indice", aux)
-                if qualidadeAux > item:
-                    #print("Qualidade posível",item)
+            for indice, item in enumerate(self.qi):
+                if qualidadeAux <= item:
+                    self.indice = indice #salva o indice atual, pois o atual vira o anterior da proxima chamada do handle
                     qualidade = item
-                    if aux < (len(self.qi)-1):
-                        aux+=1
+                    break
+            print("Qualidade que ira pedir: ", qualidade)
 
-            self.indice = aux #salva o indice atual, pois o atual vira o anterior da proxima chamada do handle
-        
         msg.add_quality_id(qualidade)
         self.send_down(msg)
 
@@ -99,5 +85,3 @@ class R2ANewAlgoritm1(IR2A):
 
     def finalization(self):
         pass
-
-
