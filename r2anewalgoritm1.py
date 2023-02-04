@@ -20,6 +20,7 @@ class R2ANewAlgoritm1(IR2A):
         self.request_time = 0 #tempo de uma requisicao
         self.qi = [] #lista com as opcoes de qualidade
         self.indice = 0 #indice da qualidade anterior
+        self.n = 10 #Tamanho da Janela de Throughputs determinada experimentalmente
 
     def handle_xml_request(self, msg):
         self.request_time = time.perf_counter()
@@ -45,15 +46,15 @@ class R2ANewAlgoritm1(IR2A):
         else: #senao
             qualidade = self.qi[self.indice] #coloca a qualidade anterior na variavel
             media = 0
-            if(len(self.throughputs) < 10):
+            if(len(self.throughputs) < n):
                 media = mean(self.throughputs)
             else:
-                for i in range(10):
-                    media += self.throughputs[len(self.throughputs)-1-i]/10  # media das taxas
+                for i in range(n):
+                    media += self.throughputs[len(self.throughputs)-1-i]/n  # media das taxas
             mad_weighted = 0 #media do desvio absoluto com pesos (pesquise apenas mad no google).mad mostra se a estabilidade da rede
-            if(len(self.throughputs) >= 10):
+            if(len(self.throughputs) >= n):
                 for i in range(10):
-                    mad_weighted += ((10 - i)/(10))*(abs(self.throughputs[len(self.throughputs)-1-i] - media)) #o vetor ja esta ordenado do dado mais antigo para o dado mais recente
+                    mad_weighted += ((n - i)/(n))*(abs(self.throughputs[len(self.throughputs)-1-i] - media)) #o vetor ja esta ordenado do dado mais antigo para o dado mais recente
                 #colocamos um peso nos itens da taxa para que os mais recentes tenham peso maior
             #mad_weighted = (mad_weighted)/len(self.throughputs)
             else:
