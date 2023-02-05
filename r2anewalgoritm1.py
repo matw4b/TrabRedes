@@ -1,8 +1,10 @@
 """
+Grupo 05
+
 Autores:
     Matheus Guaraci 180046951
-    Leonardo Maximo
-    Gabriel Nascimento
+    Gabriel Nascimento 190107111
+    Leonardo Maximo 200022172
 """
 
 from r2a.ir2a import IR2A
